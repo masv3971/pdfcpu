@@ -53,6 +53,7 @@ func (d Dict) Clone() Object {
 
 // Insert adds a new entry to this PDFDict.
 func (d Dict) Insert(key string, value Object) (ok bool) {
+	fmt.Println("make insert", key, value)
 	_, found := d.Find(key)
 	if !found {
 		d[key] = value
@@ -381,6 +382,16 @@ func (d Dict) Type() *string {
 // Subtype returns the value of the name entry for key "Subtype".
 func (d Dict) Subtype() *string {
 	return d.NameEntry("Subtype")
+}
+
+// SubFilter returns the value of the name entry for key "SubFilter".
+func (d Dict) SubFilter() *string {
+	return d.NameEntry("SubFilter")
+}
+
+// Filter returns the value of the name entry for key "Filter".
+func (d Dict) Filter() *string {
+	return d.NameEntry("Filter")
 }
 
 // Size returns the value of the int entry for key "Size"

@@ -37,7 +37,6 @@ import (
 func Write(ctx *model.Context) (err error) {
 	// Create a writer for dirname and filename if not already supplied.
 	if ctx.Write.Writer == nil {
-
 		fileName := filepath.Join(ctx.Write.DirName, ctx.Write.FileName)
 		log.CLI.Printf("writing to %s\n", fileName)
 
@@ -305,6 +304,24 @@ func writeRootObject(ctx *model.Context) error {
 
 	if err = writePages(ctx, d); err != nil {
 		return err
+	}
+
+	ir := d.IndirectRefEntry("AcroForm")
+	if ir != nil {
+		d1, err := ctx.DereferenceDict(*ir)
+		if err != nil {
+			return err
+		}
+		_, ok := d1.Find("SigFlags")
+		if ok {
+			objNr := ir.ObjectNumber.Value()
+			genNr := ir.GenerationNumber.Value()
+			if err := writeSignature(ctx, d1, objNr, genNr); err != nil {
+				return err
+			}
+		} else {
+			err = writeRootEntry(ctx, d, dictName, "AcroForm", model.RootAcroForm)
+		}
 	}
 
 	for _, e := range []struct {
@@ -1011,6 +1028,7 @@ func setFileSizeOfWrittenFile(w *model.WriteContext) error {
 	}
 
 	w.FileSize = fileInfo.Size()
+	fmt.Println("size", w.FileSize)
 
 	return nil
 }

@@ -58,6 +58,7 @@ func writeTrailer(w *model.WriteContext) error {
 }
 
 func writeObjectHeader(w *model.WriteContext, objNumber, genNumber int) (int, error) {
+	fmt.Println("writeObjhectHeader", objNumber, w.Eol)
 	return w.WriteString(fmt.Sprintf("%d %d obj%s", objNumber, genNumber, w.Eol))
 }
 
